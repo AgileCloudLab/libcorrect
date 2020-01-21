@@ -265,7 +265,13 @@ void correct_reed_solomon_decoder_create(correct_reed_solomon *rs) {
     rs->error_locator = polynomial_create(rs->min_distance);
     rs->error_locator_log = polynomial_create(rs->min_distance);
     rs->erasure_locator = polynomial_create(rs->min_distance);
-    rs->error_roots = calloc(2 * rs->min_distance, sizeof(field_element_t));
+    //In some cases while factorizing the error location polynom, it will try to look at up to 255 roots
+    //This causes memory corruption, as the roots array is not large enough
+    //This fix is to stop the memory corruption, but does not address the underlying issue of why
+    //the factorization fails
+    //Original line:   rs->error_roots = calloc(2 * rs->min_distance, sizeof(field_element_t));
+    rs->error_roots = calloc(256, sizeof(field_element_t));
+    
     rs->error_vals = malloc(rs->min_distance * sizeof(field_element_t));
     rs->error_locations = malloc(rs->min_distance * sizeof(field_logarithm_t));
 
