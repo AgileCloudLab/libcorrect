@@ -31,18 +31,19 @@ def configure(cnf) :
                          ['-Wall', '-Werror', '-Wextra', '-O3',
                           '-DNDEBUG', '-fPIC'])
 
-    import platform
-    macos_ver = [int(x) for x in (platform.mac_ver()[0]).split('.')]
-
-    if (macos_ver[0] < 10):
-        print("Unsupported version af macOS")
-        return
-    
-    if macos_ver[1] < 15:
-        cnf.env.append_value('LINKFLAGS', ['-lc++fs', '-L/usr/local/opt/llvm/lib'])
-    else:
-        cnf.env.append_value('CXXFLAGS', ['-isysroot/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX.sdk', '-I/usr/local/include'])
-        cnf.env.append_value('CFLAGS', ['-isysroot/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX.sdk', '-I/usr/local/include'])                
+    if sys.platform == 'darwin':
+        import platform
+        macos_ver = [int(x) for x in (platform.mac_ver()[0]).split('.')]
+        
+        if (macos_ver[0] < 10):
+            print("Unsupported version af macOS")
+            return
+        
+        if macos_ver[1] < 15:
+            cnf.env.append_value('LINKFLAGS', ['-lc++fs', '-L/usr/local/opt/llvm/lib'])
+        else:
+            cnf.env.append_value('CXXFLAGS', ['-isysroot/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX.sdk', '-I/usr/local/include'])
+            cnf.env.append_value('CFLAGS', ['-isysroot/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX.sdk', '-I/usr/local/include'])                
 
     
 
